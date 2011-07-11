@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace VimLike {
+namespace KeyBindings {
     static class ExtensionMethods {
         public static void scroll(this ListView listView, int howMuch) {
             int selectedIndex;

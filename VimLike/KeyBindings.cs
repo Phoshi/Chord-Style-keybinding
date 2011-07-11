@@ -5,13 +5,13 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Windows.Forms;
 
-namespace VimLike {
+namespace KeyBindings {
 
     /// <summary>
     /// A class to handle key bindings in a vim-like fashion, supporting key sequences of arbitrary size as well as key sequences which are exact subsets of longer 
     /// sequences, executable by hitting "return" after typing them.
     /// </summary>
-    public class VimLikeKeyBindings {
+    public class KeyBindings {
         /// <summary>
         /// Stores the list of keybindings for this instance
         /// </summary>
@@ -30,14 +30,14 @@ namespace VimLike {
                                                    Keys.Return
                                               };
 
-        public VimLikeKeyBindings() {
+        public KeyBindings() {
         }
 
-        public VimLikeKeyBindings(Control parent) {
+        public KeyBindings(Control parent) {
             parent.KeyDown += new KeyEventHandler(handleKeyDown);
         }
 
-        public VimLikeKeyBindings(Form parent) {
+        public KeyBindings(Form parent) {
             parent.KeyPreview = true;
             parent.KeyDown += new KeyEventHandler(handleKeyDown);
         }
