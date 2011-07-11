@@ -30,6 +30,24 @@ namespace VimLike {
                                                    Keys.Return
                                               };
 
+        public VimLikeKeyBindings() {
+        }
+
+        public VimLikeKeyBindings(Control parent) {
+            parent.KeyDown += new KeyEventHandler(handleKeyDown);
+        }
+
+        public VimLikeKeyBindings(Form parent) {
+            parent.KeyPreview = true;
+            parent.KeyDown += new KeyEventHandler(handleKeyDown);
+        }
+
+        void handleKeyDown(object sender, KeyEventArgs e) {
+            if (ProcessKey(e.KeyData)) {
+                e.Handled = true;
+            }
+        }
+
         /// <summary>
         /// Main method, processes the passed `Keys` and decides what to do. Will execute a command if the keysequence is complete.
         /// </summary>
@@ -59,6 +77,7 @@ namespace VimLike {
             if (!isStillValidInput) {
                 currentInput.Clear();
             }
+            OnKeyUpdate(this, new KeyUpdateEventArgs(currentInput));
             return isStillValidInput;
         }
 
@@ -160,6 +179,16 @@ namespace VimLike {
             }
             return newList;
         }
+
+        public delegate void KeyUpdateHandler(object sender, KeyUpdateEventArgs data);
+
+        public event KeyUpdateHandler KeyUpdate;
+
+        protected void OnKeyUpdate(object sender, KeyUpdateEventArgs data) {
+            if (KeyUpdate != null) {
+                KeyUpdate(this, data);
+            }
+        }
     }
 
     /// <summary>
@@ -193,6 +222,14 @@ namespace VimLike {
         }
     }
 
+    public class KeyUpdateEventArgs : EventArgs {
+        public List<Keys> newKeyList { get; internal set; }
+        public KeyUpdateEventArgs(List<Keys> newList) {
+            newKeyList = newList;
+        }
+    }
+
+
     [Serializable]
     public class KeyBindingException : Exception {
         public KeyBindingException() {
@@ -210,26 +247,7 @@ namespace VimLike {
         }
     }
 
-    static class ExtensionMethods {
-        /// <summary>
-        /// Returns if the list Starts With the contents of another list
-        /// Both lists must be the same type, and the type must implement .Equals
-        /// </summary>
-        /// <typeparam name="T">The Type of List to compare</typeparam>
-        /// <param name="list">The list to compare</param>
-        /// <param name="otherList">The list to check if the other list starts with this.</param>
-        /// <returns></returns>
-        static public bool StartsWith<T>(this IEnumerable<T> list, IEnumerable<T> otherList) {
-            if (otherList.Count() > list.Count()) {
-                return false;
-            }
-            for (int i = 0; i < otherList.Count(); i++) {
-                if (!list.ElementAt(i).Equals(otherList.ElementAt(i))) {
-                    return false;
-                }
-            }
-            return true;
-        }
+    static class VimExtensionMethods {
         /// <summary>
         /// Converts an Enumerable of Keys to a string representation
         /// Control is ^
