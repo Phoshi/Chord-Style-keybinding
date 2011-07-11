@@ -6,6 +6,12 @@ using System.Windows.Forms;
 
 namespace KeyBindings {
     static class ExtensionMethods {
+
+        /// <summary>
+        /// Scrolls a list view up or down 
+        /// </summary>
+        /// <param name="listView">The list view to scroll</param>
+        /// <param name="howMuch">How much to scroll. Use negative values to go up.</param>
         public static void scroll(this ListView listView, int howMuch) {
             int selectedIndex;
             if (listView.SelectedIndices.Count > 0) {
@@ -21,6 +27,11 @@ namespace KeyBindings {
             }
         }
 
+        /// <summary>
+        /// Scrolls a list box up or down 
+        /// </summary>
+        /// <param name="listBox">The list view to scroll</param>
+        /// <param name="howMuch">How much to scroll. Use negative values to go up.</param>
         public static void scroll(this ListBox listBox, int howMuch) {
             int selectedIndex;
             if (listBox.SelectedIndices.Count > 0) {

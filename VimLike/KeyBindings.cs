@@ -30,18 +30,36 @@ namespace KeyBindings {
                                                    Keys.Return
                                               };
 
+        /// <summary>
+        /// Initiliases a new keybindings instance and doesn't hook into the keypress event of any control
+        /// You will have to call ProcessKey yourself
+        /// </summary>
         public KeyBindings() {
         }
 
+        /// <summary>
+        /// Initialises a new keybindings instance and hooks into the keypress event of the given control
+        /// </summary>
+        /// <param name="parent">The control to hook into</param>
         public KeyBindings(Control parent) {
             parent.KeyDown += new KeyEventHandler(handleKeyDown);
         }
 
+        /// <summary>
+        /// Initialises a new keybindings instance and hooks into the keypress event of the given form.
+        /// NOTE: Toggles the form's KeyPreview parameter on
+        /// </summary>
+        /// <param name="parent"></param>
         public KeyBindings(Form parent) {
             parent.KeyPreview = true;
             parent.KeyDown += new KeyEventHandler(handleKeyDown);
         }
 
+        /// <summary>
+        /// Handles the keyDown event for hooked objects
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void handleKeyDown(object sender, KeyEventArgs e) {
             if (ProcessKey(e.KeyData)) {
                 e.Handled = true;
@@ -182,6 +200,9 @@ namespace KeyBindings {
 
         public delegate void KeyUpdateHandler(object sender, KeyUpdateEventArgs data);
 
+        /// <summary>
+        /// An event that fires every time the instance runs a key update. KeyUpdateEventArgs contains the current input.
+        /// </summary>
         public event KeyUpdateHandler KeyUpdate;
 
         protected void OnKeyUpdate(object sender, KeyUpdateEventArgs data) {
@@ -222,6 +243,9 @@ namespace KeyBindings {
         }
     }
 
+    /// <summary>
+    /// EventArgs object that holds the current input of the KeyBindings instance
+    /// </summary>
     public class KeyUpdateEventArgs : EventArgs {
         public List<Keys> newKeyList { get; internal set; }
         public KeyUpdateEventArgs(List<Keys> newList) {
@@ -229,7 +253,9 @@ namespace KeyBindings {
         }
     }
 
-
+    /// <summary>
+    /// Exception to throw if anything goes wrong at bind-time
+    /// </summary>
     [Serializable]
     public class KeyBindingException : Exception {
         public KeyBindingException() {
@@ -247,7 +273,10 @@ namespace KeyBindings {
         }
     }
 
-    static class VimExtensionMethods {
+    /// <summary>
+    /// Extension methods that would only be useful in this project
+    /// </summary>
+    static class KeyBindingExtensionMethods {
         /// <summary>
         /// Converts an Enumerable of Keys to a string representation
         /// Control is ^
