@@ -63,6 +63,7 @@ namespace KeyBindings {
         void handleKeyDown(object sender, KeyEventArgs e) {
             if (ProcessKey(e.KeyData)) {
                 e.Handled = true;
+                e.SuppressKeyPress = true;
             }
         }
 
