@@ -11,7 +11,7 @@ namespace VimLike {
     /// A class to handle key bindings in a vim-like fashion, supporting key sequences of arbitrary size as well as key sequences which are exact subsets of longer 
     /// sequences, executable by hitting "return" after typing them.
     /// </summary>
-    class VimLikeKeyBindings {
+    public class VimLikeKeyBindings {
         /// <summary>
         /// Stores the list of keybindings for this instance
         /// </summary>
