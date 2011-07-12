@@ -42,7 +42,7 @@ namespace KeyBindings {
         /// </summary>
         /// <param name="parent">The control to hook into</param>
         public KeyBindings(Control parent) {
-            parent.KeyDown += new KeyEventHandler(handleKeyDown);
+            hook(parent);
         }
 
         /// <summary>
@@ -51,8 +51,23 @@ namespace KeyBindings {
         /// </summary>
         /// <param name="parent"></param>
         public KeyBindings(Form parent) {
-            parent.KeyPreview = true;
-            parent.KeyDown += new KeyEventHandler(handleKeyDown);
+            hook(parent);
+        }
+
+        /// <summary>
+        /// Hooks into the KeyDown event of this control
+        /// </summary>
+        /// <param name="control">The control to hook into</param>
+        public void hook(Control control) {
+            control.KeyDown += handleKeyDown;
+        }
+        /// <summary>
+        /// Hooks into the KeyDown event of this form, and toggles KeyPreview on
+        /// </summary>
+        /// <param name="form">The form to hook into</param>
+        public void hook(Form form) {
+            form.KeyPreview = true;
+            form.KeyDown += handleKeyDown;
         }
 
         /// <summary>
@@ -277,7 +292,7 @@ namespace KeyBindings {
     /// <summary>
     /// Extension methods that would only be useful in this project
     /// </summary>
-    static class KeyBindingExtensionMethods {
+    public static class KeyBindingExtensionMethods {
         /// <summary>
         /// Converts an Enumerable of Keys to a string representation
         /// Control is ^
