@@ -31,17 +31,26 @@ namespace KeyBindings {
                                               };
 
         /// <summary>
+        /// Description of the KeyBindings object
+        /// </summary>
+        public string description { get; internal set; }
+
+        /// <summary>
         /// Initiliases a new keybindings instance and doesn't hook into the keypress event of any control
         /// You will have to call ProcessKey yourself
         /// </summary>
-        public KeyBindings() {
+        /// <param name="ndescription">Description of the keybinding object</param>
+        public KeyBindings(string ndescription = null) {
+            description = ndescription;
         }
 
         /// <summary>
         /// Initialises a new keybindings instance and hooks into the keypress event of the given control
         /// </summary>
         /// <param name="parent">The control to hook into</param>
-        public KeyBindings(Control parent) {
+        /// <param name="ndescription">Description of the keybinding object</param>
+        public KeyBindings(Control parent, string ndescription = null) {
+            description = ndescription;
             hook(parent);
         }
 
@@ -50,7 +59,9 @@ namespace KeyBindings {
         /// NOTE: Toggles the form's KeyPreview parameter on
         /// </summary>
         /// <param name="parent"></param>
-        public KeyBindings(Form parent) {
+        /// <param name="ndescription">Description of the keybinding object</param>
+        public KeyBindings(Form parent, string ndescription = null) {
+            description = ndescription;
             hook(parent);
         }
 
@@ -58,9 +69,11 @@ namespace KeyBindings {
         /// Hooks into the KeyDown event of this control
         /// </summary>
         /// <param name="control">The control to hook into</param>
-        public void hook(Control control) {
+        /// <param name="ndescription">Description of the keybinding object</param>
+        public void hook(Control control, string ndescription = null) {
             control.KeyDown += handleKeyDown;
         }
+
         /// <summary>
         /// Hooks into the KeyDown event of this form, and toggles KeyPreview on
         /// </summary>
@@ -128,9 +141,10 @@ namespace KeyBindings {
         /// </summary>
         /// <param name="binding">An enumerable of keys to bind</param>
         /// <param name="toRun">The action to run</param>
+        /// <param name="description">A description of the command</param>
         /// <returns>A boolean containing whether the operation was successful.</returns>
-        public bool bind(IEnumerable<Keys> binding, Action toRun) {
-            KeyBinding newBinding = new KeyBinding(binding, toRun);
+        public bool bind(IEnumerable<Keys> binding, Action toRun, string description = null) {
+            KeyBinding newBinding = new KeyBinding(binding, toRun, description);
             keyList.Add(newBinding);
             return true;
         }
@@ -141,10 +155,38 @@ namespace KeyBindings {
         /// </summary>
         /// <param name="binding">A key sequence to bind to</param>
         /// <param name="toRun">The action to run</param>
+        /// <param name="description">A description of the command</param>
         /// <returns>A boolean containing whether the operation was successful.</returns>
-        public bool bind(string binding, Action toRun) {
+        public bool bind(string binding, Action toRun, string description = null) {
             List<Keys> keys = parseKeysFromString(binding);
-            return bind(keys, toRun);
+            return bind(keys, toRun, description);
+        }
+
+        /// <summary>
+        /// Returns the Key Binding object for that binding.
+        /// </summary>
+        /// <param name="keySequence">The string to get the command for</param>
+        /// <returns>The KeyBinding object</returns>
+        public KeyBinding GetBinding(string keySequence) {
+            List<Keys> keysList = parseKeysFromString(keySequence);
+            return GetBinding(keysList);
+        }
+
+        /// <summary>
+        /// Returns the Key Binding object for that binding
+        /// </summary>
+        /// <param name="keySequence">The Enumerable of Keys to get the command for</param>
+        /// <returns>The KeyBinding object</returns>
+        public KeyBinding GetBinding(IEnumerable<Keys> keySequence) {
+            IEnumerable<KeyBinding> bindings = (from key in keyList where key.binding.SequenceEqual(keySequence) select key);
+            if (bindings.Count() == 0) {
+                throw new KeyBindingException("No command is bound to sequence {0}".With(keySequence.KeysToString()));
+            }
+            return bindings.ElementAt(0);
+        }
+
+        public IEnumerable<IEnumerable<Keys>> GetAllKeyBindings() {
+            return from key in keyList select key.binding;
         }
 
         /// <summary>
@@ -231,9 +273,10 @@ namespace KeyBindings {
     /// <summary>
     /// A class to hold a specific key binding and the action it should fire. Does not perform any logic itself.
     /// </summary>
-    class KeyBinding {
+    public class KeyBinding {
         private IEnumerable<Keys> keyList;
         private Action onFire;
+        public string description { get; internal set; }
 
         /// <summary>
         /// Gets the list of keys the action is bound to
@@ -246,9 +289,10 @@ namespace KeyBindings {
         /// </summary>
         /// <param name="keys">List of keys to bind to</param>
         /// <param name="action">Action to fire</param>
-        public KeyBinding(IEnumerable<Keys> keys, Action action) {
+        public KeyBinding(IEnumerable<Keys> keys, Action action, string newDescription = null) {
             keyList = keys;
             onFire = action;
+            description = newDescription;
         }
 
         /// <summary>
