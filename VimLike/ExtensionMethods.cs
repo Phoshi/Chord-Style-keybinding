@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace KeyBindings {
-    static class ExtensionMethods {
+    public static class ExtensionMethods {
 
         /// <summary>
         /// Scrolls a list view up or down 
@@ -63,6 +63,10 @@ namespace KeyBindings {
                 }
             }
             return true;
+        }
+
+        static public string With(this string toFormat, params string[] formatWith) {
+            return String.Format(toFormat, formatWith);
         }
     }
 }
